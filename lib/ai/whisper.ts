@@ -1,10 +1,10 @@
 import OpenAI, { toFile } from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function transcribeAudio(input: File | Blob | Buffer, filename: string = 'recording.webm') {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
+
     try {
         let fileForOpenAI;
 

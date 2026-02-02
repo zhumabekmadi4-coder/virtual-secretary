@@ -1,22 +1,30 @@
 import OpenAI from 'openai';
 
-const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-});
+export async function analyzeTranscript(transcriptText: string): Promise<MeetingAnalysis> {
+    const openai = new OpenAI({
+        apiKey: process.env.OPENAI_API_KEY,
+    });
 
-export interface MeetingAnalysis {
-    summary: string;
-    agenda: string[];
-    tasks: Array<{
-        assignee: string;
-        task: string;
-        deadline?: string;
-    }>;
-    decisions: string[];
-    next_meeting?: string;
-    sentiment?: 'positive' | 'neutral' | 'negative';
+    try {
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4o', // Or gpt-4o-mini for cost savings
+            messages: [
+                { role: 'system', content: SYSTEM_PROMPT },
+                { role: 'user', content: transcriptText }
+            ],
+            response_format: { type: "json_object" },
+            temperature: 0.3, // Lower temp for more deterministic analysis
+        });
+
+        const content = response.choices[0].message.content;
+        if (!content) throw new Error('No analysis generated');
+
+        return JSON.parse(content) as MeetingAnalysis;
+    } catch (error) {
+        console.error('GPT Analysis Error:', error);
+        throw new Error('Analysis failed');
+    }
 }
-
 const SYSTEM_PROMPT = `
 Ты — профессиональный бизнес-ассистент и секретарь. Твоя задача — проанализировать стенограмму встречи и извлечь ключевую информацию.
 
