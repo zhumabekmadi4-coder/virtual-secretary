@@ -63,6 +63,8 @@ create table if not exists analysis (
     key_points text [],
     tasks jsonb,
     -- Array of { task: string, assignee?: string, deadline?: string }
+    decisions jsonb,
+    -- Added missing decisions
     sentiment text,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

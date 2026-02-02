@@ -61,8 +61,12 @@ create table if not exists analysis (
     meeting_id uuid references meetings(id) on delete cascade not null,
     summary text,
     key_points text [],
+    analysis jsonb,
+    -- Legacy, removal pending
     tasks jsonb,
     -- Array of { task: string, assignee?: string, deadline?: string }
+    decisions jsonb,
+    -- Added missing decisions
     sentiment text,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );

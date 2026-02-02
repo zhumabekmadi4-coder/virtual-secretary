@@ -109,8 +109,8 @@ export async function POST(request: Request) {
             summary: analysis.summary,
             tasks: analysis.tasks,
             key_points: analysis.agenda, // Mapping Agenda -> Key Points
+            decisions: analysis.decisions, // Added missing decisions
             sentiment: analysis.sentiment
-            // Decisions are lost? Let's append to summary or key_points.
         });
 
         if (analysisDbError) console.error('Analysis save error:', analysisDbError);
