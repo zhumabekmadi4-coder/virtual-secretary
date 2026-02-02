@@ -44,7 +44,7 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     // Protected routes
-    const protectedRoutes = ['/dashboard', '/record', '/meetings', '/settings']
+    const protectedRoutes = ['/dashboard', '/record', '/meetings', '/settings', '/admin']
     const isProtectedRoute = protectedRoutes.some(route =>
         request.nextUrl.pathname.startsWith(route)
     )
@@ -55,6 +55,15 @@ export async function updateSession(request: NextRequest) {
         url.pathname = '/login'
         url.searchParams.set('redirect', request.nextUrl.pathname)
         return NextResponse.redirect(url)
+    }
+
+    // Strict Admin check for /admin routes
+    if (request.nextUrl.pathname.startsWith('/admin')) {
+        if (user?.email !== 'zhumabekmadi4@gmail.com') {
+            const url = request.nextUrl.clone()
+            url.pathname = '/dashboard'
+            return NextResponse.redirect(url)
+        }
     }
 
     // Redirect to dashboard if  authenticated and trying to access auth pages
